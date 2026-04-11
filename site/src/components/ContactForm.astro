@@ -1,0 +1,235 @@
+---
+import { t, type Lang } from "~/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "en" } = Astro.props;
+const d = t(lang);
+
+const categories = [
+  { value: "general",       label: d.form.categoryGeneral },
+  { value: "job",           label: d.form.categoryJob },
+  { value: "security",      label: d.form.categorySecurity },
+  { value: "collaboration", label: d.form.categoryCollab },
+  { value: "other",         label: d.form.categoryOther },
+];
+---
+
+<section id="contact-form" class="relative py-24 sm:py-32 border-t border-[color:var(--color-border)]/60">
+  <div class="container-x">
+    <div class="max-w-3xl mb-12">
+      <p class="reveal font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-text-muted)] mb-3">
+        {d.form.sectionLabel}
+      </p>
+      <h2 class="reveal text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.1] text-balance">
+        {d.form.titleA}<br />
+        {d.form.titleB} <span class="text-[color:var(--color-accent)]">email</span>.
+      </h2>
+      <p class="reveal mt-5 text-[color:var(--color-text-dim)] text-lg max-w-xl">
+        {d.form.intro}
+      </p>
+    </div>
+
+    <form
+      id="ticket-form"
+      class="reveal max-w-3xl grid gap-4 sm:grid-cols-2"
+      novalidate
+      autocomplete="on"
+      data-i18n-success-prefix={d.form.successPrefix}
+      data-i18n-success-suffix={d.form.successSuffix}
+      data-i18n-error-prefix={d.form.errorPrefix}
+      data-i18n-sending={d.form.sending}
+      data-i18n-sent={d.form.sent}
+      data-i18n-submit={d.form.submit}
+    >
+      <div class="sm:col-span-1">
+        <label class="block font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-text-muted)] mb-2">
+          {d.form.firstName}
+        </label>
+        <input
+          type="text"
+          name="first_name"
+          required
+          minlength="1"
+          maxlength="80"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          placeholder={d.form.firstNamePlaceholder}
+        />
+      </div>
+
+      <div class="sm:col-span-1">
+        <label class="block font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-text-muted)] mb-2">
+          {d.form.lastName}
+        </label>
+        <input
+          type="text"
+          name="last_name"
+          required
+          minlength="1"
+          maxlength="80"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          placeholder={d.form.lastNamePlaceholder}
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label class="block font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-text-muted)] mb-2">
+          {d.form.email}
+        </label>
+        <input
+          type="email"
+          name="email"
+          required
+          maxlength="254"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          placeholder={d.form.emailPlaceholder}
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label class="block font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-text-muted)] mb-2">
+          {d.form.category}
+        </label>
+        <select
+          name="category"
+          required
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+        >
+          <option value="" disabled selected>{d.form.categoryPlaceholder}</option>
+          {categories.map((c) => <option value={c.value}>{c.label}</option>)}
+        </select>
+      </div>
+
+      <div class="sm:col-span-2">
+        <label class="block font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-text-muted)] mb-2">
+          {d.form.subject}
+        </label>
+        <input
+          type="text"
+          name="subject"
+          required
+          minlength="3"
+          maxlength="200"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          placeholder={d.form.subjectPlaceholder}
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label class="block font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-text-muted)] mb-2">
+          {d.form.message}
+        </label>
+        <textarea
+          name="message"
+          required
+          minlength="10"
+          maxlength="5000"
+          rows="7"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors resize-y"
+          placeholder={d.form.messagePlaceholder}
+        ></textarea>
+        <p class="mt-1 text-[11px] font-mono text-[color:var(--color-text-muted)]">
+          <span id="char-count">0</span> / 5000
+        </p>
+      </div>
+
+      <!-- honeypot (hidden from users, bots will fill it) -->
+      <input
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+        class="hidden"
+        aria-hidden="true"
+      />
+
+      <div class="sm:col-span-2 flex items-center justify-between gap-4 flex-wrap mt-2">
+        <p id="form-status" class="font-mono text-xs text-[color:var(--color-text-muted)]" role="status" aria-live="polite"></p>
+        <button
+          type="submit"
+          id="submit-btn"
+          class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-bg)] px-6 py-3 text-sm font-medium hover:bg-[color:var(--color-accent-dim)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span id="submit-label">{d.form.submit}</span>
+          <span id="submit-arrow">→</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script is:inline>
+(() => {
+  const form = document.getElementById("ticket-form");
+  if (!form) return;
+
+  const S = form.dataset;
+  const status = document.getElementById("form-status");
+  const btn = document.getElementById("submit-btn");
+  const label = document.getElementById("submit-label");
+  const arrow = document.getElementById("submit-arrow");
+  const charCount = document.getElementById("char-count");
+  const msg = form.querySelector("textarea[name='message']");
+
+  msg.addEventListener("input", () => {
+    charCount.textContent = msg.value.length.toString();
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    status.textContent = "";
+    status.style.color = "";
+
+    // honeypot: if filled, silently "succeed"
+    if (form.website.value.trim() !== "") {
+      status.textContent = S.i18nSuccessPrefix + S.i18nSuccessSuffix;
+      form.reset();
+      return;
+    }
+
+    const payload = {
+      first_name: form.first_name.value.trim(),
+      last_name:  form.last_name.value.trim(),
+      email:      form.email.value.trim(),
+      category:   form.category.value,
+      subject:    form.subject.value.trim(),
+      message:    form.message.value.trim(),
+    };
+
+    btn.disabled = true;
+    label.textContent = S.i18nSending;
+    arrow.textContent = "";
+    status.textContent = "";
+
+    try {
+      const res = await fetch("/api/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+
+      status.style.color = "var(--color-accent)";
+      status.textContent = S.i18nSuccessPrefix + data.public_code + S.i18nSuccessSuffix;
+      form.reset();
+      charCount.textContent = "0";
+      label.textContent = S.i18nSent;
+      arrow.textContent = "";
+    } catch (err) {
+      status.style.color = "var(--color-rose)";
+      status.textContent = S.i18nErrorPrefix + err.message;
+      label.textContent = S.i18nSubmit;
+      arrow.textContent = "→";
+    } finally {
+      setTimeout(() => { btn.disabled = false; }, 800);
+    }
+  });
+})();
+</script>

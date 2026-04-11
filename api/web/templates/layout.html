@@ -1,0 +1,54 @@
+{{define "layout.html"}}
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{block "title" .}}Admin — mathsanalysis{{end}}</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; }
+    html, body { background: #0a0a0b; color: #ededef; font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .scrollbar-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-slim::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+    [x-cloak] { display: none !important; }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 70%);
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative">
+
+<header class="sticky top-0 z-40 border-b border-zinc-800/70 backdrop-blur bg-[#0a0a0b]/80">
+  <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+    <a href="/admin/tickets" class="flex items-center gap-2 mono text-sm">
+      <span class="size-2 rounded-full bg-emerald-400 shadow-[0_0_10px] shadow-emerald-400"></span>
+      <span class="text-zinc-100">admin</span>
+      <span class="text-zinc-500">.mathsanalysis</span>
+    </a>
+    <div class="flex items-center gap-4 text-xs mono">
+      <a href="/" class="text-zinc-400 hover:text-zinc-100">↗ public site</a>
+      <span class="text-zinc-500">{{.AdminEmail}}</span>
+    </div>
+  </div>
+</header>
+
+<main class="relative z-10 max-w-7xl mx-auto px-6 py-8">
+  {{block "content" .}}{{end}}
+</main>
+
+</body>
+</html>
+{{end}}

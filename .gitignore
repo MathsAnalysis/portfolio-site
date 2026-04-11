@@ -1,0 +1,27 @@
+# ─── secrets ───
+.env
+.env.*
+!.env.example
+
+# ─── Astro / node ───
+site/node_modules
+site/dist
+site/.astro
+cf-worker/node_modules
+cf-worker/.wrangler
+cf-worker/dist
+
+# ─── Go ───
+api/bin
+api/tmp
+api/*.test
+api/go.sum
+
+# ─── Docker / logs ───
+*.log
+
+# ─── Editor / agent config ───
+.vscode
+.idea
+.DS_Store
+.claude

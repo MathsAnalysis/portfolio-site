@@ -1,0 +1,45 @@
+{{define "fragment_tickets_list.html"}}
+<div id="tickets-list" class="rounded-[14px] border border-zinc-800 bg-zinc-900/40 overflow-hidden">
+  {{if .Tickets}}
+  <table class="w-full text-sm">
+    <thead class="bg-zinc-900/60 text-[11px] uppercase tracking-wider text-zinc-500">
+      <tr>
+        <th class="text-left px-5 py-3 w-[110px]">Status</th>
+        <th class="text-left px-5 py-3">From</th>
+        <th class="text-left px-5 py-3">Subject</th>
+        <th class="text-left px-5 py-3 w-[140px]">Category</th>
+        <th class="text-left px-5 py-3 w-[170px]">Received</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-zinc-800">
+      {{range .Tickets}}
+      <tr class="hover:bg-zinc-900/60 transition-colors cursor-pointer"
+          onclick="window.location='/admin/tickets/{{.ID}}'">
+        <td class="px-5 py-3">
+          <span class="inline-flex items-center gap-1.5 mono text-[10px] uppercase px-2 py-0.5 rounded-md border {{statusColor .Status}}">
+            {{.Status}}
+          </span>
+        </td>
+        <td class="px-5 py-3">
+          <div class="font-medium">{{.FirstName}} {{.LastName}}</div>
+          <div class="text-xs text-zinc-500 mono">{{.Email}}</div>
+        </td>
+        <td class="px-5 py-3 text-zinc-200 truncate max-w-md">{{.Subject}}</td>
+        <td class="px-5 py-3 text-xs text-zinc-400">{{categoryLabel .Category}}</td>
+        <td class="px-5 py-3 text-xs mono text-zinc-500">{{humanTime .CreatedAt}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{else}}
+  <div class="text-center py-20 text-zinc-500">
+    <p class="mono text-sm">inbox is empty</p>
+    <p class="text-xs mt-2">no tickets match your filter.</p>
+  </div>
+  {{end}}
+
+  <div class="flex items-center justify-between px-5 py-3 border-t border-zinc-800 bg-zinc-900/30 text-xs mono text-zinc-500">
+    <span>{{.Total}} ticket{{if ne .Total 1}}s{{end}}</span>
+  </div>
+</div>
+{{end}}

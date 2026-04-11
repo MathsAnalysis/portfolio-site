@@ -1,0 +1,21 @@
+---
+import Base from "~/layouts/Base.astro";
+import Nav from "~/components/Nav.astro";
+import ContactForm from "~/components/ContactForm.astro";
+import { t } from "~/i18n";
+
+const lang = "en";
+const d = t(lang);
+---
+
+<Base
+  title={d.meta.contactTitle}
+  description={d.meta.contactDescription}
+  lang={lang}
+  pathname="/contact/"
+>
+  <Nav lang={lang} page="contact" />
+  <main class="relative z-10">
+    <ContactForm lang={lang} />
+  </main>
+</Base>

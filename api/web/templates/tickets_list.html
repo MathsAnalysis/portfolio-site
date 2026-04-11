@@ -1,0 +1,60 @@
+{{define "tickets_list.html"}}
+{{template "layout.html" .}}
+{{end}}
+
+{{define "title"}}Tickets — Admin{{end}}
+
+{{define "content"}}
+  <div class="flex items-end justify-between mb-8 gap-6 flex-wrap">
+    <div>
+      <p class="mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-2">~/ admin / tickets</p>
+      <h1 class="text-3xl font-semibold tracking-tight">Inbox</h1>
+    </div>
+
+    <!-- status stats -->
+    <div class="flex items-center gap-2 text-xs mono">
+      {{with .Stats}}
+      <span class="px-2.5 py-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">new {{.New}}</span>
+      <span class="px-2.5 py-1 rounded-md border border-cyan-500/30 bg-cyan-500/10 text-cyan-400">open {{.Open}}</span>
+      <span class="px-2.5 py-1 rounded-md border border-violet-500/30 bg-violet-500/10 text-violet-400">replied {{.Replied}}</span>
+      <span class="px-2.5 py-1 rounded-md border border-zinc-700 bg-zinc-800/40 text-zinc-400">closed {{.Closed}}</span>
+      {{end}}
+    </div>
+  </div>
+
+  <!-- filters -->
+  <form
+    class="mb-6 flex flex-wrap items-center gap-2 text-sm"
+    hx-get="/admin/tickets"
+    hx-trigger="change, keyup delay:300ms from:input[name='q']"
+    hx-target="#tickets-list"
+    hx-push-url="true"
+    hx-select="#tickets-list"
+    hx-swap="outerHTML"
+  >
+    <select name="status" class="bg-zinc-900/60 border border-zinc-800 rounded-lg px-3 py-2 focus:border-zinc-600 outline-none">
+      <option value="">all status</option>
+      <option value="new"     {{if eq .Status "new"}}selected{{end}}>new</option>
+      <option value="open"    {{if eq .Status "open"}}selected{{end}}>open</option>
+      <option value="replied" {{if eq .Status "replied"}}selected{{end}}>replied</option>
+      <option value="closed"  {{if eq .Status "closed"}}selected{{end}}>closed</option>
+      <option value="spam"    {{if eq .Status "spam"}}selected{{end}}>spam</option>
+    </select>
+    <select name="category" class="bg-zinc-900/60 border border-zinc-800 rounded-lg px-3 py-2 focus:border-zinc-600 outline-none">
+      <option value="">all categories</option>
+      <option value="general"       {{if eq .Category "general"}}selected{{end}}>General</option>
+      <option value="job"           {{if eq .Category "job"}}selected{{end}}>Job</option>
+      <option value="security"      {{if eq .Category "security"}}selected{{end}}>Security</option>
+      <option value="collaboration" {{if eq .Category "collaboration"}}selected{{end}}>Collaboration</option>
+      <option value="other"         {{if eq .Category "other"}}selected{{end}}>Other</option>
+    </select>
+    <input
+      type="search"
+      name="q"
+      placeholder="search subject, email, name…"
+      class="flex-1 min-w-[240px] bg-zinc-900/60 border border-zinc-800 rounded-lg px-3 py-2 placeholder-zinc-600 focus:border-zinc-600 outline-none"
+    >
+  </form>
+
+  {{template "fragment_tickets_list.html" .}}
+{{end}}

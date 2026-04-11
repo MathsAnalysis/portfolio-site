@@ -1,0 +1,18 @@
+name = "mathsanalysis-inbound-email"
+main = "src/inbound-email.js"
+compatibility_date = "2026-04-01"
+
+# Plain JS worker, no TypeScript compile needed.
+# Only dependency is "postal-mime" which is ESM-compatible on CF Workers.
+
+[vars]
+WEBHOOK_URL = "https://mathsanalysis.com/api/webhook/email"
+FALLBACK_EMAIL = "carlo4340@outlook.it"
+
+# Secrets (set via `wrangler secret put INBOUND_WEBHOOK_SECRET`):
+#   INBOUND_WEBHOOK_SECRET
+
+# Email trigger is configured in the Cloudflare dashboard:
+#   Email → Email Routing → Routes →
+#     custom:    tickets@mathsanalysis.com  → Send to a Worker → mathsanalysis-inbound-email
+#     catch-all: tickets+*@mathsanalysis.com (if supported) or additional custom route

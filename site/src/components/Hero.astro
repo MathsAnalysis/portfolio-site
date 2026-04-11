@@ -1,0 +1,85 @@
+---
+import { t } from "~/i18n";
+import type { Lang } from "~/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "en" } = Astro.props;
+const d = t(lang);
+---
+
+<section id="top" class="relative overflow-hidden">
+  <div class="container-x pt-24 pb-28 sm:pt-32 sm:pb-36">
+    <div class="mx-auto max-w-3xl text-center">
+      <p
+        class="reveal inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-[color:var(--color-text-dim)] mb-8"
+      >
+        <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-accent)] animate-pulse"></span>
+        {d.hero.status}
+      </p>
+
+      <h1
+        class="reveal text-balance font-semibold tracking-tight leading-[1.05] text-[clamp(2.25rem,6vw,4.75rem)]"
+      >
+        {d.hero.headlineA}<br />
+        {d.hero.headlineB}<br />
+        {d.hero.headlineC} <span class="italic font-normal text-[color:var(--color-accent)]">{d.hero.emphasis}</span>{d.hero.headlineD}
+      </h1>
+
+      <p
+        class="reveal mx-auto mt-8 max-w-2xl text-pretty text-[color:var(--color-text-dim)] text-lg leading-relaxed"
+      >
+        {d.hero.subtitleA} <span class="text-[color:var(--color-text)]">Carlo Maria Cardi</span>{d.hero.subtitleB}
+      </p>
+
+      <div class="reveal mt-10 flex flex-wrap justify-center gap-3">
+        <a
+          href="#work"
+          class="group inline-flex items-center gap-2 rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-bg)] px-5 py-2.5 text-sm font-medium hover:bg-[color:var(--color-accent-dim)] transition-colors"
+        >
+          {d.hero.ctaPrimary}
+          <span class="transition-transform group-hover:translate-x-0.5">→</span>
+        </a>
+        <a
+          href="mailto:carlo4340@outlook.it"
+          class="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm text-[color:var(--color-text-dim)] hover:text-[color:var(--color-text)] hover:border-[color:var(--color-border-hover)] transition-colors"
+        >
+          {d.hero.ctaSecondary}
+        </a>
+      </div>
+    </div>
+
+    <!-- Metrics strip: always 3 equal columns, centered -->
+    <div class="reveal mx-auto mt-20 max-w-4xl grid grid-cols-3 gap-px bg-[color:var(--color-border)] rounded-2xl overflow-hidden border border-[color:var(--color-border)]">
+      {d.hero.metrics.map((m) => (
+        <div class="bg-[color:var(--color-bg-elev)] p-4 sm:p-6 text-center">
+          <div class="font-mono text-xl sm:text-3xl text-[color:var(--color-text)] tracking-tight">
+            {m.value}
+          </div>
+          <div class="mt-1 text-[10px] sm:text-xs uppercase tracking-[0.12em] text-[color:var(--color-text-muted)]">
+            {m.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Symmetric background glows (left + right mirrored) -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full blur-3xl opacity-[0.14] bg-[radial-gradient(circle,_var(--color-cyan),_transparent_60%)]"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute top-32 -left-40 h-[360px] w-[360px] rounded-full blur-3xl opacity-[0.10] bg-[radial-gradient(circle,_var(--color-accent),_transparent_60%)]"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute top-32 -right-40 h-[360px] w-[360px] rounded-full blur-3xl opacity-[0.10] bg-[radial-gradient(circle,_var(--color-accent),_transparent_60%)]"
+  >
+  </div>
+</section>

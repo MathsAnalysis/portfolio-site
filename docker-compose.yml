@@ -1,0 +1,140 @@
+name: portfolio
+
+services:
+  # ───────────────── static site (nginx + Astro build) ─────────────────
+  site:
+    build:
+      context: ./site
+      dockerfile: Dockerfile
+    image: portfolio-site:latest
+    container_name: portfolio-site
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8181:80"
+    networks:
+      - portfolio
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      com.mathsanalysis.service: "portfolio-site"
+      com.mathsanalysis.public-url: "https://mathsanalysis.com"
+
+  # ───────────────── Go API + admin dashboard ─────────────────
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: portfolio-api:latest
+    container_name: portfolio-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_ENV: production
+      HTTP_ADDR: ":8182"
+      DATABASE_URL: "postgres://portfolio:${POSTGRES_PASSWORD:-changeme}@portfolio-postgres:5432/portfolio?sslmode=disable"
+      MIGRATIONS_DIR: "/app/migrations"
+      TEMPLATES_DIR: "/app/web/templates"
+      PUBLIC_BASE_URL: "https://mathsanalysis.com"
+
+      # ─── Admin auth ───
+      # HTTP Basic Auth (primary): username + bcrypt password hash
+      ADMIN_BASIC_USER: "${ADMIN_BASIC_USER:-}"
+      ADMIN_BASIC_HASH: "${ADMIN_BASIC_HASH:-}"
+      ADMIN_REALM:      "${ADMIN_REALM:-mathsanalysis admin}"
+      # Dev bypass (leave empty in production)
+      ADMIN_MOCK_EMAIL: "${ADMIN_MOCK_EMAIL:-}"
+
+      # ─── Phase 3: Cloudflare Access JWT ───
+      CF_ACCESS_TEAM_DOMAIN: "${CF_ACCESS_TEAM_DOMAIN:-}"
+      CF_ACCESS_AUDIENCE:    "${CF_ACCESS_AUDIENCE:-}"
+
+      # ─── Cloudflare Turnstile (server-side) ───
+      TURNSTILE_SECRET: "${TURNSTILE_SECRET:-}"
+
+      # ─── Internal SMTP (axiom-mailserver) for new-ticket notifications ───
+      SMTP_HOST:        "${SMTP_HOST:-}"
+      SMTP_PORT:        "${SMTP_PORT:-587}"
+      SMTP_USER:        "${SMTP_USER:-}"
+      SMTP_PASSWORD:    "${SMTP_PASSWORD:-}"
+      SMTP_FROM:        "${SMTP_FROM:-}"
+      SMTP_TO:          "${SMTP_TO:-}"
+      SMTP_USE_TLS:     "${SMTP_USE_TLS:-false}"
+      SMTP_SKIP_VERIFY: "${SMTP_SKIP_VERIFY:-false}"
+
+      # ─── Resend (outbound visitor replies) ───
+      RESEND_API_KEY: "${RESEND_API_KEY:-}"
+      RESEND_FROM:    "${RESEND_FROM:-}"
+      RESEND_DOMAIN:  "${RESEND_DOMAIN:-mathsanalysis.com}"
+
+      # ─── Inbound email webhook (HMAC) ───
+      INBOUND_WEBHOOK_SECRET: "${INBOUND_WEBHOOK_SECRET:-}"
+    ports:
+      - "127.0.0.1:8182:8182"
+    networks:
+      - portfolio
+      - axiom_mail
+    healthcheck:
+      disable: true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      com.mathsanalysis.service: "portfolio-api"
+
+  # ───────────────── PostgreSQL (dedicated) ─────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: portfolio-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-changeme}"
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - portfolio-pg-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5435:5432"
+    networks:
+      - portfolio
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "portfolio", "-d", "portfolio"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      com.mathsanalysis.service: "portfolio-postgres"
+
+networks:
+  portfolio:
+    name: portfolio
+    driver: bridge
+  axiom_mail:
+    name: antivpn_axiom-network
+    external: true
+
+volumes:
+  portfolio-pg-data:
+    name: portfolio-pg-data

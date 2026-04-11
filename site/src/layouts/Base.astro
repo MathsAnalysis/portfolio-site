@@ -1,0 +1,106 @@
+---
+import "~/styles/global.css";
+import type { Lang } from "~/i18n";
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: Lang;
+  pathname?: string;
+}
+
+const {
+  title = "Carlo Maria Cardi. Backend Developer & Security Researcher",
+  description = "Backend developer and security researcher from Catania, Italy.",
+  lang = "en",
+  pathname = "/",
+} = Astro.props;
+
+const canonical = `https://mathsanalysis.com${pathname}`;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="alternate" hreflang="en" href={`https://mathsanalysis.com${pathname === "/" ? "/" : pathname.replace(/^\/it/, "")}`} />
+    <link rel="alternate" hreflang="it" href={`https://mathsanalysis.com${pathname.startsWith("/it") ? pathname : `/it${pathname === "/" ? "" : pathname}`}`} />
+    <link rel="alternate" hreflang="x-default" href="https://mathsanalysis.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === "it" ? "it_IT" : "en_US"} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      Theme init: runs BEFORE first paint. Reads the persisted theme from
+      localStorage, falling back to the user's OS preference. Sets the
+      [data-theme] attribute on <html> so the CSS variables resolve correctly
+      on the very first frame (no flash of wrong theme).
+    -->
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem("theme");
+          const prefersLight =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches;
+          const theme = stored || (prefersLight ? "light" : "dark");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (_) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+  </head>
+  <body class="relative">
+    <slot />
+
+    <script>
+      // Scroll-reveal via IntersectionObserver (no JS framework).
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-visible");
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      // Theme toggle: clicking any [data-theme-toggle] button swaps dark/light.
+      document.addEventListener("click", (e) => {
+        const t = e.target as HTMLElement | null;
+        const btn = t?.closest("[data-theme-toggle]");
+        if (!btn) return;
+        const cur = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = cur === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (_) {}
+      });
+    </script>
+  </body>
+</html>

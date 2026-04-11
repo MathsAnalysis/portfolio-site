@@ -1,0 +1,27 @@
+---
+import Base from "~/layouts/Base.astro";
+import Nav from "~/components/Nav.astro";
+import Hero from "~/components/Hero.astro";
+import Projects from "~/components/Projects.astro";
+import Stack from "~/components/Stack.astro";
+import Contact from "~/components/Contact.astro";
+import { t } from "~/i18n";
+
+const lang = "it";
+const d = t(lang);
+---
+
+<Base
+  title={d.meta.homeTitle}
+  description={d.meta.homeDescription}
+  lang={lang}
+  pathname="/it/"
+>
+  <Nav lang={lang} page="home" />
+  <main class="relative z-10">
+    <Hero lang={lang} />
+    <Projects lang={lang} />
+    <Stack lang={lang} />
+    <Contact lang={lang} />
+  </main>
+</Base>

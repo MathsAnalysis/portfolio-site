@@ -1,0 +1,58 @@
+---
+import { t, type Lang, pathFor } from "~/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "en" } = Astro.props;
+const d = t(lang);
+const year = new Date().getFullYear();
+---
+
+<section id="contact" class="relative py-24 sm:py-36 border-t border-[color:var(--color-border)]/60">
+  <div class="container-x">
+    <div class="max-w-3xl">
+      <p class="reveal font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-text-muted)] mb-4">
+        {d.contact.sectionLabel}
+      </p>
+      <h2 class="reveal text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05] text-balance">
+        {d.contact.headlineA} <span class="text-[color:var(--color-accent)]">{d.contact.headlineScale}</span>{d.contact.headlineB} <span class="text-[color:var(--color-cyan)]">{d.contact.headlineHarden}</span>{d.contact.headlineC} <span class="italic font-normal">{d.contact.headlineBuilt}</span>?
+      </h2>
+
+      <p class="reveal mt-6 text-lg text-[color:var(--color-text-dim)] max-w-2xl">
+        {d.contact.body}
+      </p>
+
+      <div class="reveal mt-10 flex flex-wrap gap-3">
+        <a
+          href={pathFor(lang, "contact")}
+          class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-bg)] px-6 py-3 text-sm font-medium hover:bg-[color:var(--color-accent-dim)] transition-colors"
+        >
+          {d.contact.cta}
+          <span>→</span>
+        </a>
+        <a
+          href="https://github.com/MathsAnalysis"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-6 py-3 text-sm text-[color:var(--color-text-dim)] hover:text-[color:var(--color-text)] hover:border-[color:var(--color-border-hover)] transition-colors"
+        >
+          {d.contact.github}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-[color:var(--color-border)]/60">
+  <div class="container-x py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-mono text-[color:var(--color-text-muted)]">
+    <p>
+      © {year} Carlo Maria Cardi · {d.contact.footerLocation}
+    </p>
+    <p class="flex items-center gap-2">
+      <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-accent)] animate-pulse"></span>
+      {d.contact.footerStatus}
+    </p>
+  </div>
+</footer>

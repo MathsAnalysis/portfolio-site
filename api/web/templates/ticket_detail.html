@@ -1,0 +1,12 @@
+{{define "ticket_detail.html"}}
+{{template "layout.html" .}}
+{{end}}
+
+{{define "title"}}{{.Ticket.Subject}} — Admin{{end}}
+
+{{define "content"}}
+  <a href="/admin/tickets" class="inline-flex items-center gap-2 text-xs mono text-zinc-500 hover:text-zinc-300 mb-6">
+    ← back to inbox
+  </a>
+  {{template "fragment_ticket_detail.html" .}}
+{{end}}

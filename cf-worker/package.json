@@ -1,0 +1,17 @@
+{
+  "name": "mathsanalysis-inbound-email",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "dependencies": {
+    "postal-mime": "^2.4.2"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}
