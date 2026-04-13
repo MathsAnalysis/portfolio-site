@@ -54,86 +54,136 @@ const projects: Project[] = [
   },
 ];
 
-const accentClass: Record<Project["accent"], string> = {
-  cyan: "text-[color:var(--color-cyan)]",
-  accent: "text-[color:var(--color-accent)]",
-  amber: "text-[color:var(--color-amber)]",
+const gradientVar: Record<string, string> = {
+  axiom:    "var(--grad-axiom)",
+  shardify: "var(--grad-shardify)",
+  brain4j:  "var(--grad-brain4j)",
 };
+
+const abbrev: Record<string, string> = {
+  axiom:    "AXIOM",
+  shardify: "SHARD",
+  brain4j:  "BRAIN4J",
+};
+
+function rowNum(i: number): string {
+  return String(i + 1).padStart(2, "0");
+}
 ---
 
-<section id="work" class="relative py-24 sm:py-32 border-t border-[color:var(--color-border)]/60">
+<section id="work" class="relative py-24 sm:py-32 border-t border-[color:var(--color-border)]">
   <div class="container-x">
-    <div class="mb-14 flex items-end justify-between gap-8 flex-wrap">
+
+    <!-- Section header -->
+    <div class="mb-14 flex items-start justify-between gap-10 flex-wrap">
       <div>
-        <p class="reveal font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-text-muted)] mb-3">
+        <p class="reveal font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-text-muted)] mb-4">
           {d.projects.sectionLabel}
         </p>
-        <h2 class="reveal text-3xl sm:text-4xl font-semibold tracking-tight">
+        <h2 class="reveal text-5xl sm:text-7xl font-black tracking-[-0.03em]">
           {d.projects.title}
         </h2>
       </div>
-      <p class="reveal max-w-md text-sm text-[color:var(--color-text-dim)]">
+      <p class="reveal max-w-sm text-sm text-[color:var(--color-text-dim)] mt-8 sm:mt-14">
         {d.projects.intro}
       </p>
     </div>
 
-    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-      {projects.map((p, i) => (
-        <article
-          class="reveal glow-border group relative flex flex-col rounded-[14px] border border-[color:var(--color-border)] bg-[color:var(--color-bg-card)] p-6 sm:p-7 transition-colors hover:border-[color:var(--color-border-hover)]"
-          style={`transition-delay: ${i * 60}ms`}
-        >
-          <div class="flex items-start justify-between gap-3 mb-4">
-            <span class={`font-mono text-[11px] uppercase tracking-[0.14em] ${accentClass[p.accent]}`}>
-              {p.role}
-            </span>
-            {p.live && (
-              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-[color:var(--color-accent)]">
-                <span class="size-1.5 rounded-full bg-[color:var(--color-accent)] animate-pulse"></span>
-                {d.projects.liveBadge}
-              </span>
-            )}
-          </div>
-
-          <h3 class="text-2xl font-semibold tracking-tight mb-2">{p.name}</h3>
-          <p class="text-sm text-[color:var(--color-text-dim)] mb-4">{p.tagline}</p>
-          <p class="text-sm text-[color:var(--color-text-dim)] leading-relaxed mb-6 flex-1">
-            {p.description}
-          </p>
-
-          <ul class="flex flex-wrap gap-1.5 mb-6">
-            {p.stack.map((s) => (
-              <li class="font-mono text-[11px] px-2 py-0.5 rounded-md border border-[color:var(--color-border)] text-[color:var(--color-text-dim)]">
-                {s}
-              </li>
-            ))}
-          </ul>
-
-          <div class="flex items-center gap-4 text-sm">
-            <a
-              href={p.repo}
-              target="_blank"
-              rel="noopener"
-              class="inline-flex items-center gap-1.5 text-[color:var(--color-text)] hover:text-[color:var(--color-accent)] transition-colors"
+    <!-- Project rows -->
+    <div class="space-y-6">
+      {projects.map((p, i) => {
+        const isEven = i % 2 === 0;
+        return (
+          <article
+            class="reveal tile rounded-[16px] overflow-hidden border border-[color:var(--color-border)] grid grid-cols-1 md:grid-cols-12"
+            style={`transition-delay: ${i * 60}ms`}
+          >
+            <!-- Text panel -->
+            <div
+              class={[
+                "md:col-span-7 bg-[color:var(--color-bg-card)] p-8 sm:p-12 flex flex-col justify-between gap-10",
+                !isEven ? "md:order-2" : "",
+              ].join(" ")}
             >
-              <svg viewBox="0 0 24 24" fill="currentColor" class="size-4" aria-hidden="true">
-                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.92.58.11.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.32-1.28-1.67-1.28-1.67-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56C20.22 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/>
-              </svg>
-              {d.projects.repoLabel}
-            </a>
-            {p.live && (
-              <a
-                href={p.live}
-                target="_blank"
-                rel="noopener"
-                class="inline-flex items-center gap-1.5 text-[color:var(--color-cyan)] hover:underline"
+              <!-- Top meta row: role label + row number -->
+              <div class="flex items-center justify-between gap-4">
+                <span class="font-mono text-[11px] uppercase tracking-widest text-[color:var(--color-text-muted)]">
+                  {p.role}
+                </span>
+                <span class="font-mono text-2xl font-bold text-[color:var(--color-text-muted)]">
+                  {rowNum(i)}
+                </span>
+              </div>
+
+              <!-- Project name -->
+              <div>
+                <h3 class="text-4xl sm:text-6xl font-black tracking-[-0.03em] leading-none mt-8">
+                  {p.name}
+                </h3>
+                <p class="text-lg text-[color:var(--color-text-dim)] mt-4 max-w-md">
+                  {p.tagline}
+                </p>
+              </div>
+
+              <!-- Stack pills -->
+              <ul class="flex flex-wrap gap-2">
+                {p.stack.map((s) => (
+                  <li class="font-mono text-xs px-2 py-1 rounded-sm border border-[color:var(--color-border)] text-[color:var(--color-text-dim)]">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+
+              <!-- Links -->
+              <div class="flex flex-wrap items-center gap-6 mt-auto">
+                <a
+                  href={p.repo}
+                  target="_blank"
+                  rel="noopener"
+                  class="font-mono text-sm text-[color:var(--color-text-dim)] underline-offset-4 hover:underline hover:text-[color:var(--color-text)] transition-colors"
+                >
+                  {d.projects.repoLabel} &uarr;&nearr;
+                </a>
+                {p.live && (
+                  <a
+                    href={p.live}
+                    target="_blank"
+                    rel="noopener"
+                    class="font-mono text-sm text-[color:var(--color-cyan)] underline-offset-4 hover:underline transition-colors"
+                  >
+                    {d.projects.liveLabel}
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <!-- Graphic panel -->
+            <div
+              class={[
+                "md:col-span-5 relative overflow-hidden min-h-[260px] md:min-h-0",
+                !isEven ? "md:order-1" : "",
+              ].join(" ")}
+              style={`background: ${gradientVar[p.key]}`}
+            >
+              {/* LIVE badge */}
+              {p.live && (
+                <span class="-rotate-2 absolute top-6 left-6 inline-flex items-center px-3 py-1 rounded-full bg-white text-black font-mono text-[10px] uppercase tracking-widest shadow-md select-none z-10">
+                  {d.projects.liveBadge}
+                </span>
+              )}
+
+              {/* Giant abbreviation — editorial bleed */}
+              <span
+                class="tile-mega font-black text-black uppercase absolute bottom-6 right-6 text-right leading-none select-none opacity-90"
+                aria-hidden="true"
               >
-                {d.projects.liveLabel}
-              </a>
-            )}
-          </div>
-        </article>
-      ))}
+                {abbrev[p.key]}
+              </span>
+            </div>
+          </article>
+        );
+      })}
     </div>
+
   </div>
 </section>

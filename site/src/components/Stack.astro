@@ -7,28 +7,58 @@ interface Props {
 
 const { lang = "en" } = Astro.props;
 const d = t(lang);
+
+const flatItems: string[] = d.stack.groups.flatMap((g) => g.items);
+const doubled = [...flatItems, ...flatItems];
+
+const borderColors = [
+  "var(--color-cyan)",
+  "var(--color-pink)",
+  "var(--color-purple)",
+  "var(--color-accent)",
+  "var(--color-amber)",
+  "var(--color-blue)",
+];
 ---
 
-<section id="stack" class="relative py-24 sm:py-32 border-t border-[color:var(--color-border)]/60">
-  <div class="container-x">
+<section id="stack" class="relative border-t border-[color:var(--color-border)]">
+  <!-- Marquee ticker — full-width, above the grid -->
+  <div
+    class="marquee relative w-full overflow-hidden py-6 border-b border-[color:var(--color-border)]"
+    style="mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);"
+  >
+    <div class="marquee-track flex gap-10 whitespace-nowrap">
+      {doubled.map((tech) => (
+        <span class="inline-flex items-center gap-3 font-mono uppercase tracking-wider text-sm text-[color:var(--color-text-dim)]">
+          {tech}
+          <span class="text-[color:var(--color-text-muted)]" aria-hidden="true">·</span>
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <div class="container-x py-24 sm:py-32">
     <div class="mb-14 max-w-2xl">
       <p class="reveal font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-text-muted)] mb-3">
         {d.stack.sectionLabel}
       </p>
-      <h2 class="reveal text-3xl sm:text-4xl font-semibold tracking-tight">
+      <h2 class="reveal text-4xl sm:text-6xl font-bold tracking-tight">
         {d.stack.title1}<br />{d.stack.title2} <em class="not-italic text-[color:var(--color-cyan)]">{d.stack.titleEm}</em>.
       </h2>
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {d.stack.groups.map((g) => (
-        <div class="reveal rounded-[14px] border border-[color:var(--color-border)] bg-[color:var(--color-bg-elev)] p-6">
+      {d.stack.groups.map((g, idx) => (
+        <div
+          class="reveal rounded-[10px] border border-[color:var(--color-border)] bg-[color:var(--color-bg-elev)] p-6"
+          style={`border-top: 1px solid ${borderColors[idx % borderColors.length]};`}
+        >
           <p class="font-mono text-[11px] uppercase tracking-[0.16em] text-[color:var(--color-text-muted)] mb-4">
             {g.label}
           </p>
           <ul class="flex flex-wrap gap-1.5">
             {g.items.map((it) => (
-              <li class="font-mono text-xs px-2.5 py-1 rounded-md border border-[color:var(--color-border)] text-[color:var(--color-text-dim)] hover:text-[color:var(--color-text)] hover:border-[color:var(--color-border-hover)] transition-colors">
+              <li class="font-mono text-xs px-2.5 py-1 rounded-sm border border-[color:var(--color-border)] text-[color:var(--color-text-dim)] hover:text-[color:var(--color-text)] hover:border-[color:var(--color-border-hover)] transition-colors">
                 {it}
               </li>
             ))}

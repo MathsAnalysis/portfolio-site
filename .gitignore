@@ -25,3 +25,8 @@ api/go.sum
 .idea
 .DS_Store
 .claude
+
+# ─── Ad-hoc assets (screenshots, scratch) ───
+Screenshot*.png
+Screenshot*.jpg
+scratch/

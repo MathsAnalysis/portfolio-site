@@ -32,6 +32,9 @@ interface Dict {
     headlineC: string;
     emphasis: string;
     headlineD: string;
+    bigWord1: string;
+    bigWord2: string;
+    bigWord3: string;
     subtitleA: string;
     subtitleB: string;
     ctaPrimary: string;
@@ -125,6 +128,9 @@ export const dict: Record<Lang, Dict> = {
       headlineC: "under",
       emphasis: "pressure",
       headlineD: ".",
+      bigWord1: "Backend",
+      bigWord2: "Security",
+      bigWord3: "Distributed",
       subtitleA: "I'm",
       subtitleB:
         ", backend developer and security researcher. I build distributed systems, high performance APIs and AI powered infrastructure that serve thousands of requests without flinching.",
@@ -246,6 +252,9 @@ export const dict: Record<Lang, Dict> = {
       headlineC: "sotto",
       emphasis: "pressione",
       headlineD: ".",
+      bigWord1: "Backend",
+      bigWord2: "Security",
+      bigWord3: "Distribuito",
       subtitleA: "Sono",
       subtitleB:
         ", backend developer e security researcher. Costruisco sistemi distribuiti, API ad alte prestazioni e infrastrutture AI che servono migliaia di richieste senza battere ciglio.",

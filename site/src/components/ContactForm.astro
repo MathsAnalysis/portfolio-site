@@ -23,9 +23,9 @@ const categories = [
       <p class="reveal font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--color-text-muted)] mb-3">
         {d.form.sectionLabel}
       </p>
-      <h2 class="reveal text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.1] text-balance">
+      <h2 class="reveal text-[clamp(2.25rem,5vw,4.5rem)] font-bold tracking-[-0.02em] leading-[0.98] text-balance">
         {d.form.titleA}<br />
-        {d.form.titleB} <span class="text-[color:var(--color-accent)]">email</span>.
+        {d.form.titleB} <span class="text-gradient italic font-normal">email</span>.
       </h2>
       <p class="reveal mt-5 text-[color:var(--color-text-dim)] text-lg max-w-xl">
         {d.form.intro}
@@ -54,7 +54,7 @@ const categories = [
           required
           minlength="1"
           maxlength="80"
-          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-[8px] px-4 py-3 text-sm focus:border-[color:var(--color-pink)] focus:ring-1 focus:ring-[color:var(--color-pink)]/40 outline-none transition-colors"
           placeholder={d.form.firstNamePlaceholder}
         />
       </div>
@@ -69,7 +69,7 @@ const categories = [
           required
           minlength="1"
           maxlength="80"
-          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-[8px] px-4 py-3 text-sm focus:border-[color:var(--color-pink)] focus:ring-1 focus:ring-[color:var(--color-pink)]/40 outline-none transition-colors"
           placeholder={d.form.lastNamePlaceholder}
         />
       </div>
@@ -83,7 +83,7 @@ const categories = [
           name="email"
           required
           maxlength="254"
-          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-[8px] px-4 py-3 text-sm focus:border-[color:var(--color-pink)] focus:ring-1 focus:ring-[color:var(--color-pink)]/40 outline-none transition-colors"
           placeholder={d.form.emailPlaceholder}
         />
       </div>
@@ -95,7 +95,7 @@ const categories = [
         <select
           name="category"
           required
-          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-[8px] px-4 py-3 text-sm focus:border-[color:var(--color-pink)] focus:ring-1 focus:ring-[color:var(--color-pink)]/40 outline-none transition-colors"
         >
           <option value="" disabled selected>{d.form.categoryPlaceholder}</option>
           {categories.map((c) => <option value={c.value}>{c.label}</option>)}
@@ -112,7 +112,7 @@ const categories = [
           required
           minlength="3"
           maxlength="200"
-          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-[8px] px-4 py-3 text-sm focus:border-[color:var(--color-pink)] focus:ring-1 focus:ring-[color:var(--color-pink)]/40 outline-none transition-colors"
           placeholder={d.form.subjectPlaceholder}
         />
       </div>
@@ -127,7 +127,7 @@ const categories = [
           minlength="10"
           maxlength="5000"
           rows="7"
-          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-lg px-4 py-3 text-sm focus:border-[color:var(--color-border-hover)] outline-none transition-colors resize-y"
+          class="w-full bg-[color:var(--color-bg-elev)] border border-[color:var(--color-border)] rounded-[8px] px-4 py-3 text-sm focus:border-[color:var(--color-pink)] focus:ring-1 focus:ring-[color:var(--color-pink)]/40 outline-none transition-colors resize-y"
           placeholder={d.form.messagePlaceholder}
         ></textarea>
         <p class="mt-1 text-[11px] font-mono text-[color:var(--color-text-muted)]">
@@ -150,7 +150,7 @@ const categories = [
         <button
           type="submit"
           id="submit-btn"
-          class="inline-flex items-center gap-2 rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-bg)] px-6 py-3 text-sm font-medium hover:bg-[color:var(--color-accent-dim)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-2 rounded-[10px] bg-[color:var(--color-accent)] text-[color:var(--color-bg)] px-7 py-3.5 text-sm font-semibold hover:bg-[color:var(--color-accent-dim)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span id="submit-label">{d.form.submit}</span>
           <span id="submit-arrow">→</span>

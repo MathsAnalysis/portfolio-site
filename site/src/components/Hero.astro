@@ -11,75 +11,99 @@ const d = t(lang);
 ---
 
 <section id="top" class="relative overflow-hidden">
-  <div class="container-x pt-24 pb-28 sm:pt-32 sm:pb-36">
-    <div class="mx-auto max-w-3xl text-center">
-      <p
-        class="reveal inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-[color:var(--color-text-dim)] mb-8"
-      >
-        <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-accent)] animate-pulse"></span>
-        {d.hero.status}
-      </p>
+  <!-- Animated corner blobs — slow drifting gradient accents -->
+  <div
+    aria-hidden="true"
+    class="blob-a pointer-events-none absolute -top-40 -right-40 size-[720px] rounded-full blur-3xl opacity-[0.28]"
+    style="background: radial-gradient(circle, #834cef 0%, #fe2857 45%, transparent 70%);"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="blob-b pointer-events-none absolute -bottom-40 -left-40 size-[560px] rounded-full blur-3xl opacity-[0.20]"
+    style="background: radial-gradient(circle, #21d8de 0%, #087cfa 55%, transparent 70%);"
+  ></div>
 
-      <h1
-        class="reveal text-balance font-semibold tracking-tight leading-[1.05] text-[clamp(2.25rem,6vw,4.75rem)]"
-      >
-        {d.hero.headlineA}<br />
-        {d.hero.headlineB}<br />
-        {d.hero.headlineC} <span class="italic font-normal text-[color:var(--color-accent)]">{d.hero.emphasis}</span>{d.hero.headlineD}
-      </h1>
+  <div class="container-x relative z-10 pt-20 sm:pt-28 pb-24 sm:pb-32">
 
-      <p
-        class="reveal mx-auto mt-8 max-w-2xl text-pretty text-[color:var(--color-text-dim)] text-lg leading-relaxed"
-      >
-        {d.hero.subtitleA} <span class="text-[color:var(--color-text)]">Carlo Maria Cardi</span>{d.hero.subtitleB}
-      </p>
+    <!-- 2-column editorial grid -->
+    <div class="grid md:grid-cols-[60fr_40fr] gap-12 lg:gap-16 items-center">
 
-      <div class="reveal mt-10 flex flex-wrap justify-center gap-3">
-        <a
-          href="#work"
-          class="group inline-flex items-center gap-2 rounded-full bg-[color:var(--color-accent)] text-[color:var(--color-bg)] px-5 py-2.5 text-sm font-medium hover:bg-[color:var(--color-accent-dim)] transition-colors"
-        >
-          {d.hero.ctaPrimary}
-          <span class="transition-transform group-hover:translate-x-0.5">→</span>
-        </a>
-        <a
-          href="mailto:carlo4340@outlook.it"
-          class="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] px-5 py-2.5 text-sm text-[color:var(--color-text-dim)] hover:text-[color:var(--color-text)] hover:border-[color:var(--color-border-hover)] transition-colors"
-        >
-          {d.hero.ctaSecondary}
-        </a>
+      <!-- LEFT: text column -->
+      <div>
+
+        <!-- Status pill -->
+        <p class="reveal inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-[color:var(--color-text-dim)] mb-10 border border-[color:var(--color-border)] rounded-[4px] px-3 py-1.5">
+          <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-accent)] animate-pulse"></span>
+          {d.hero.status}
+        </p>
+
+        <!-- Stacked big words — flowing animated gradient (JetBrains-style) -->
+        <h1 class="reveal flex flex-col font-black uppercase leading-[0.9] tracking-[-0.05em] text-[clamp(2.75rem,9vw,8rem)] mb-8">
+          <span class="anim-gradient-text">{d.hero.bigWord1}</span>
+          <span class="anim-gradient-text delay-1">{d.hero.bigWord2}</span>
+          <span class="anim-gradient-text delay-2">{d.hero.bigWord3}</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="reveal text-base sm:text-lg leading-relaxed text-[color:var(--color-text-dim)] max-w-xl mb-10">
+          {d.hero.subtitleA} <span class="font-semibold text-[color:var(--color-text)]">Carlo Maria Cardi</span>{d.hero.subtitleB}
+        </p>
+
+        <!-- CTAs -->
+        <div class="reveal flex flex-wrap gap-3">
+          <a
+            href="#work"
+            class="btn-jb btn-jb-yellow inline-flex items-center gap-2"
+          >
+            {d.hero.ctaPrimary}
+            <span>→</span>
+          </a>
+          <a
+            href="mailto:carlo4340@outlook.it"
+            class="btn-jb btn-jb-outline inline-flex items-center gap-2"
+          >
+            {d.hero.ctaSecondary}
+          </a>
+        </div>
+
       </div>
-    </div>
 
-    <!-- Metrics strip: always 3 equal columns, centered -->
-    <div class="reveal mx-auto mt-20 max-w-4xl grid grid-cols-3 gap-px bg-[color:var(--color-border)] rounded-2xl overflow-hidden border border-[color:var(--color-border)]">
-      {d.hero.metrics.map((m) => (
-        <div class="bg-[color:var(--color-bg-elev)] p-4 sm:p-6 text-center">
-          <div class="font-mono text-xl sm:text-3xl text-[color:var(--color-text)] tracking-tight">
-            {m.value}
+      <!-- RIGHT: product-style tile with animated gradient -->
+      <div class="reveal relative hidden md:block aspect-square w-full max-w-md ml-auto">
+        <div class="anim-gradient-tile absolute inset-0 rounded-[20px] overflow-hidden ring-1 ring-white/10">
+          <!-- location tag (yellow) -->
+          <div class="absolute top-6 left-6 font-mono text-[10px] uppercase tracking-widest px-2 py-1 rounded-sm bg-[color:var(--color-yellow)] text-black font-bold">
+            catania.ita
           </div>
-          <div class="mt-1 text-[10px] sm:text-xs uppercase tracking-[0.12em] text-[color:var(--color-text-muted)]">
-            {m.label}
+          <!-- stack tag (white) -->
+          <div class="absolute top-6 right-6 font-mono text-[10px] uppercase tracking-widest px-2 py-1 rounded-sm bg-white text-black">
+            backend · security
+          </div>
+          <!-- big initials / monogram filling the tile -->
+          <div class="absolute bottom-4 left-5 right-5 font-black text-black leading-[0.82] tracking-[-0.05em] text-[clamp(3rem,7vw,6.5rem)]">
+            C<span class="text-white">M</span>C
           </div>
         </div>
-      ))}
-    </div>
-  </div>
+      </div>
 
-  <!-- Symmetric background glows (left + right mirrored) -->
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full blur-3xl opacity-[0.14] bg-[radial-gradient(circle,_var(--color-cyan),_transparent_60%)]"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute top-32 -left-40 h-[360px] w-[360px] rounded-full blur-3xl opacity-[0.10] bg-[radial-gradient(circle,_var(--color-accent),_transparent_60%)]"
-  >
-  </div>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute top-32 -right-40 h-[360px] w-[360px] rounded-full blur-3xl opacity-[0.10] bg-[radial-gradient(circle,_var(--color-accent),_transparent_60%)]"
-  >
+    </div>
+
+    <!-- Metrics strip — full-width, below both columns -->
+    <div class="reveal border-y border-[color:var(--color-border)] mt-16 py-8 flex flex-wrap gap-x-0 gap-y-6">
+      {d.hero.metrics.map((m, i) => {
+        const c = ["word-cyan", "word-pink", "word-purple"][i % 3];
+        return (
+          <div class={`flex-1 min-w-[8rem] flex flex-col items-start px-6 ${i > 0 ? "border-l border-[color:var(--color-border)]" : ""}`}>
+            <span class={`font-mono font-bold text-3xl sm:text-5xl tracking-tight leading-none ${c}`}>
+              {m.value}
+            </span>
+            <span class="mt-1.5 font-mono text-xs uppercase tracking-[0.12em] text-[color:var(--color-text-muted)]">
+              {m.label}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+
   </div>
 </section>
