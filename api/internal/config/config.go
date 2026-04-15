@@ -15,10 +15,15 @@ type Config struct {
 	AdminMockEmail string // phase 1: bypass CF Access; set to "" in production
 	PublicBaseURL  string
 
-	// HTTP Basic Auth on /admin (primary prod auth)
+	// HTTP Basic Auth on /admin (fallback for curl / CI access)
 	AdminBasicUser string
 	AdminBasicHash string // bcrypt hash; must start with $2
 	AdminRealm     string
+
+	// Session cookie for the admin login page (HMAC secret)
+	SessionSecret string
+	SessionTTL    int // hours
+	SessionSecure bool
 
 	// CF Access JWT verification
 	CFAccessTeamDomain string // e.g. "mathsanalysis.cloudflareaccess.com"
@@ -57,6 +62,9 @@ func FromEnv() (*Config, error) {
 		AdminBasicUser:       os.Getenv("ADMIN_BASIC_USER"),
 		AdminBasicHash:       os.Getenv("ADMIN_BASIC_HASH"),
 		AdminRealm:           getEnv("ADMIN_REALM", "mathsanalysis admin"),
+		SessionSecret:        os.Getenv("SESSION_SECRET"),
+		SessionTTL:           getEnvInt("SESSION_TTL_HOURS", 12),
+		SessionSecure:        getEnvBool("SESSION_SECURE", true),
 		CFAccessTeamDomain:   os.Getenv("CF_ACCESS_TEAM_DOMAIN"),
 		CFAccessAudience:     os.Getenv("CF_ACCESS_AUDIENCE"),
 		TurnstileSecret:      os.Getenv("TURNSTILE_SECRET"),

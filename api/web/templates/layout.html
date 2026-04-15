@@ -39,8 +39,16 @@
       <span class="text-zinc-500">.mathsanalysis</span>
     </a>
     <div class="flex items-center gap-4 text-xs mono">
-      <a href="/" class="text-zinc-400 hover:text-zinc-100">↗ public site</a>
+      <a href="/" class="text-zinc-400 hover:text-zinc-100 transition-colors">↗ public site</a>
       <span class="text-zinc-500">{{.AdminEmail}}</span>
+      <form method="post" action="/admin/logout" class="inline">
+        <button
+          type="submit"
+          class="text-zinc-400 hover:text-[#fe2857] transition-colors uppercase tracking-wider"
+        >
+          sign out
+        </button>
+      </form>
     </div>
   </div>
 </header>

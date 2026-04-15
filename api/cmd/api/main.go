@@ -20,6 +20,7 @@ import (
 	"github.com/MathsAnalysis/portfolio-api/internal/email"
 	"github.com/MathsAnalysis/portfolio-api/internal/handlers"
 	mw "github.com/MathsAnalysis/portfolio-api/internal/middleware"
+	"github.com/MathsAnalysis/portfolio-api/internal/session"
 	"github.com/MathsAnalysis/portfolio-api/internal/turnstile"
 
 	"github.com/go-chi/chi/v5"
@@ -106,11 +107,23 @@ func main() {
 		Realm:    cfg.AdminRealm,
 	}
 
+	ttl := time.Duration(cfg.SessionTTL) * time.Hour
+	if ttl <= 0 {
+		ttl = 12 * time.Hour
+	}
+	sessionMgr := session.New(cfg.SessionSecret, ttl, cfg.SessionSecure)
+	if !sessionMgr.Enabled() {
+		log.Warn("session manager disabled",
+			"reason", "SESSION_SECRET missing or shorter than 16 bytes — login page will show an error",
+		)
+	}
+
 	log.Info("subsystems",
 		"smtp_notifier", smtpEnabled,
 		"resend_sender", resendEnabled,
 		"turnstile", tv.Enabled(),
 		"cf_access_jwt", jwtVerifier != nil,
+		"session_cookie", sessionMgr.Enabled(),
 		"admin_basic_auth", basicAuth.Enabled(),
 		"admin_mock", cfg.AdminMockEmail != "",
 		"inbound_webhook", cfg.InboundWebhookSecret != "",
@@ -132,6 +145,14 @@ func main() {
 		Store:         store,
 		Log:           log,
 		InboundSecret: cfg.InboundWebhookSecret,
+	}
+	authH := &handlers.Auth{
+		Templates: tmplSet,
+		Sessions:  sessionMgr,
+		Log:       log,
+		AdminUser: cfg.AdminBasicUser,
+		AdminHash: cfg.AdminBasicHash,
+		Realm:     cfg.AdminRealm,
 	}
 
 	r := chi.NewRouter()
@@ -155,14 +176,21 @@ func main() {
 	// -------- inbound email webhook (HMAC-signed by CF Worker) --------
 	r.Post("/api/webhook/email", wh.InboundEmail)
 
+	// -------- admin login (public) --------
+	r.Get("/admin/login", authH.LoginPage)
+	r.Post("/admin/login", authH.LoginPost)
+	r.Get("/admin/logout", authH.Logout)
+	r.Post("/admin/logout", authH.Logout)
+
 	// -------- admin (auth required) --------
 	r.Group(func(g chi.Router) {
-		g.Use(mw.AdminAuth(basicAuth, cfg.AdminMockEmail, jwtVerifier, log))
+		g.Use(mw.AdminAuth(sessionMgr, basicAuth, cfg.AdminMockEmail, jwtVerifier, log))
 		g.Get("/admin", adm.Index)
 		g.Get("/admin/tickets", adm.TicketsList)
 		g.Get("/admin/tickets/{id}", adm.TicketDetail)
 		g.Post("/admin/tickets/{id}/reply", adm.TicketReply)
 		g.Post("/admin/tickets/{id}/status", adm.TicketStatus)
+		g.Post("/admin/tickets/{id}/delete", adm.TicketDelete)
 	})
 
 	srv := &http.Server{
@@ -215,6 +243,8 @@ func loadTemplateSet(tmplDir string) (handlers.TemplateSet, error) {
 				return "bg-zinc-500/10 text-zinc-400 border-zinc-500/30"
 			case "spam":
 				return "bg-rose-500/10 text-rose-400 border-rose-500/30"
+			case "archived":
+				return "bg-amber-500/10 text-amber-400 border-amber-500/30"
 			}
 			return "bg-zinc-500/10 text-zinc-400 border-zinc-500/30"
 		},

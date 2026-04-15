@@ -1,0 +1,144 @@
+{{define "login.html"}}
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · {{.Realm}}</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; }
+    html, body {
+      background: #000;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      min-height: 100dvh;
+    }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    body {
+      background:
+        radial-gradient(900px 500px at 85% -5%, rgba(131,76,239,0.22), transparent 55%),
+        radial-gradient(700px 400px at 10% 105%, rgba(254,40,87,0.18), transparent 55%),
+        radial-gradient(700px 400px at 50% 50%, rgba(33,216,222,0.08), transparent 60%),
+        #000;
+    }
+
+    @keyframes gradient-flow {
+      0%   { background-position:   0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position:   0% 50%; }
+    }
+    .anim-gradient-text {
+      background: linear-gradient(90deg, #fe2857 0%, #834cef 25%, #087cfa 50%, #21d8de 75%, #21d789 100%);
+      background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: gradient-flow 10s ease-in-out infinite;
+    }
+
+    @keyframes gradient-drift {
+      0%, 100% { background-position:   0%   0%; }
+      50%      { background-position: 100% 100%; }
+    }
+    .anim-gradient-edge {
+      background: linear-gradient(135deg, #fe2857 0%, #834cef 25%, #087cfa 50%, #21d8de 75%, #fcf84a 100%);
+      background-size: 400% 400%;
+      animation: gradient-drift 18s ease-in-out infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .anim-gradient-text, .anim-gradient-edge { animation: none !important; }
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center px-4 py-10 relative">
+
+  <!-- Back to site -->
+  <a href="/" class="absolute top-5 left-5 mono text-[11px] uppercase tracking-widest text-white/50 hover:text-white transition-colors">← back to site</a>
+
+  <main class="w-full max-w-[420px]">
+
+    <!-- Brand -->
+    <div class="flex items-center justify-center gap-2.5 mb-10">
+      <span class="inline-block size-2 rounded-[2px] bg-[#fe2857] shadow-[0_0_14px_#fe2857]"></span>
+      <span class="font-bold tracking-tight">Carlo Maria Cardi</span>
+    </div>
+
+    <!-- Card with animated gradient border -->
+    <div class="relative rounded-[14px] p-[1.5px] anim-gradient-edge">
+      <div class="rounded-[12px] bg-black px-7 py-8 sm:px-9 sm:py-10">
+
+        <p class="mono text-[11px] uppercase tracking-[0.2em] text-white/50 mb-2">~/ admin · sign in</p>
+        <h1 class="text-[clamp(1.875rem,4vw,2.5rem)] font-black tracking-tight leading-[1] mb-2">
+          <span class="anim-gradient-text">Welcome back.</span>
+        </h1>
+        <p class="text-sm text-white/60 mb-8">
+          Enter your credentials to access the {{.Realm}} dashboard.
+        </p>
+
+        {{if .Error}}
+        <div class="rounded-[8px] border border-[#fe2857]/40 bg-[#fe2857]/10 text-[#ffb0c0] text-sm px-4 py-3 mb-5 flex items-start gap-2">
+          <svg class="shrink-0 size-4 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+          </svg>
+          <span>{{.Error}}</span>
+        </div>
+        {{end}}
+
+        <form method="post" action="/admin/login" class="space-y-4" autocomplete="on" novalidate>
+          <input type="hidden" name="next" value="{{.Next}}">
+
+          <div>
+            <label for="email" class="block mono text-[11px] uppercase tracking-[0.14em] text-white/60 mb-2">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+              autofocus
+              value="{{.Email}}"
+              placeholder="you@example.com"
+              class="w-full bg-white/[0.03] border border-white/15 rounded-[8px] px-4 py-3 text-sm focus:border-[#fe2857] focus:ring-1 focus:ring-[#fe2857]/40 outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="block mono text-[11px] uppercase tracking-[0.14em] text-white/60 mb-2">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              autocomplete="current-password"
+              placeholder="••••••••••••••••"
+              class="w-full bg-white/[0.03] border border-white/15 rounded-[8px] px-4 py-3 text-sm focus:border-[#fe2857] focus:ring-1 focus:ring-[#fe2857]/40 outline-none transition-colors"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#fcf84a] text-black px-6 py-3.5 text-sm font-bold hover:shadow-[0_10px_30px_-12px_rgba(252,248,74,0.55)] transition-all"
+          >
+            Sign in
+            <span>→</span>
+          </button>
+        </form>
+
+        <p class="mt-6 mono text-[10px] uppercase tracking-[0.14em] text-white/30 text-center">
+          Authorized access only · all attempts logged
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer meta -->
+    <p class="mono text-[10px] uppercase tracking-widest text-white/30 text-center mt-8">
+      mathsanalysis · {{.Now.Year}}
+    </p>
+  </main>
+
+</body>
+</html>
+{{end}}

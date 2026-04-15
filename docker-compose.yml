@@ -58,6 +58,11 @@ services:
       # Dev bypass (leave empty in production)
       ADMIN_MOCK_EMAIL: "${ADMIN_MOCK_EMAIL:-}"
 
+      # Session cookie (HMAC-signed)
+      SESSION_SECRET:    "${SESSION_SECRET:-}"
+      SESSION_TTL_HOURS: "${SESSION_TTL_HOURS:-12}"
+      SESSION_SECURE:    "${SESSION_SECURE:-true}"
+
       # ─── Phase 3: Cloudflare Access JWT ───
       CF_ACCESS_TEAM_DOMAIN: "${CF_ACCESS_TEAM_DOMAIN:-}"
       CF_ACCESS_AUDIENCE:    "${CF_ACCESS_AUDIENCE:-}"

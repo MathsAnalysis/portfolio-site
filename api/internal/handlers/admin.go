@@ -208,7 +208,7 @@ func (h *Admin) TicketReply(w http.ResponseWriter, r *http.Request) {
 	h.TicketDetail(w, r)
 }
 
-// PATCH /admin/tickets/{id}/status  (or POST with _method=patch)
+// POST /admin/tickets/{id}/status
 func (h *Admin) TicketStatus(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := uuid.Parse(idStr)
@@ -222,7 +222,7 @@ func (h *Admin) TicketStatus(w http.ResponseWriter, r *http.Request) {
 	}
 	status := r.FormValue("status")
 	switch status {
-	case "new", "open", "replied", "closed", "spam":
+	case "new", "open", "replied", "closed", "spam", "archived":
 	default:
 		http.Error(w, "invalid status", http.StatusBadRequest)
 		return
@@ -240,4 +240,44 @@ func (h *Admin) TicketStatus(w http.ResponseWriter, r *http.Request) {
 
 	r.Method = http.MethodGet
 	h.TicketDetail(w, r)
+}
+
+// POST /admin/tickets/{id}/delete
+// Permanent deletion. Writes an audit_log entry with actor + requester
+// metadata, then cascades to messages. Responds with an htmx redirect to
+// /admin/tickets so the list refreshes after deletion.
+func (h *Admin) TicketDelete(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		http.Error(w, "bad id", http.StatusBadRequest)
+		return
+	}
+
+	actor := middleware.AdminEmail(r.Context())
+	ip := middleware.ClientIP(r)
+
+	if err := h.Store.Delete(r.Context(), id, actor, ip); err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		h.Log.Error("delete ticket", "err", err)
+		http.Error(w, "db error", http.StatusInternalServerError)
+		return
+	}
+
+	h.Log.Warn("ticket deleted",
+		"ticket", id,
+		"admin", actor,
+		"ip", ip,
+	)
+
+	// For htmx: send redirect header; for plain form: 303 to list
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/admin/tickets")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	http.Redirect(w, r, "/admin/tickets", http.StatusSeeOther)
 }

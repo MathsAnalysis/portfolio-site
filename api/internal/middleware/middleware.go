@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"net/url"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -116,15 +117,23 @@ func (b BasicAuthConfig) Enabled() bool {
 	return b.Username != "" && strings.HasPrefix(b.Hash, "$2")
 }
 
+// SessionReader is satisfied by *session.Manager.
+type SessionReader interface {
+	FromRequest(r *http.Request) (email string, err error)
+	Enabled() bool
+}
+
 // AdminAuth checks, in order:
-//  1. HTTP Basic Auth (if configured) — primary production path
+//  1. Session cookie (primary — set by /admin/login POST)
 //  2. mockEmail — dev-only bypass
-//  3. CF Access signed JWT (if configured)
-//  4. Otherwise reject with 401.
+//  3. HTTP Basic Auth — fallback for curl / programmatic access
+//  4. CF Access signed JWT (if configured)
 //
-// Returns 401 with WWW-Authenticate header when basic auth is configured,
-// so browsers show the native login prompt on first visit.
+// When none succeeds:
+//   - If the request accepts HTML (browser), 302 to /admin/login?next=<orig-path>
+//   - Otherwise 401 + WWW-Authenticate (API / curl)
 func AdminAuth(
+	sessions SessionReader,
 	basic BasicAuthConfig,
 	mockEmail string,
 	verifier TokenVerifier,
@@ -135,13 +144,22 @@ func AdminAuth(
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var email string
 
-			// 1. HTTP Basic Auth (primary)
-			if basic.Enabled() {
+			// 1. Session cookie
+			if sessions != nil && sessions.Enabled() {
+				if e, err := sessions.FromRequest(r); err == nil {
+					email = e
+				}
+			}
+
+			// 2. dev bypass
+			if email == "" && mockEmail != "" {
+				email = mockEmail
+			}
+
+			// 3. HTTP Basic Auth (programmatic fallback)
+			if email == "" && basic.Enabled() {
 				user, pass, ok := r.BasicAuth()
 				if ok && subtle.ConstantTimeCompare([]byte(user), []byte(basic.Username)) == 1 {
-					// bcrypt is slow-by-design (~100ms) — we do it only on a
-					// well-formed credential. Rate-limit above protects us from
-					// mass brute-force at the public edge.
 					if err := bcrypt.CompareHashAndPassword([]byte(basic.Hash), []byte(pass)); err == nil {
 						email = basic.Username
 					} else {
@@ -151,23 +169,9 @@ func AdminAuth(
 						)
 					}
 				}
-				if email == "" {
-					realm := basic.Realm
-					if realm == "" {
-						realm = "mathsanalysis admin"
-					}
-					w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`", charset="UTF-8"`)
-					http.Error(w, "unauthorized", http.StatusUnauthorized)
-					return
-				}
 			}
 
-			// 2. dev bypass (only if basic auth wasn't configured)
-			if email == "" && mockEmail != "" {
-				email = mockEmail
-			}
-
-			// 3. CF Access JWT
+			// 4. CF Access JWT
 			if email == "" && verifier != nil {
 				token := r.Header.Get("Cf-Access-Jwt-Assertion")
 				if token == "" {
@@ -176,8 +180,7 @@ func AdminAuth(
 					}
 				}
 				if token != "" {
-					e, err := verifier.Verify(r.Context(), token)
-					if err != nil {
+					if e, err := verifier.Verify(r.Context(), token); err != nil {
 						log.Warn("admin auth: jwt invalid",
 							"err", err,
 							"path", r.URL.Path,
@@ -193,10 +196,20 @@ func AdminAuth(
 				log.Warn("admin auth: unauthenticated",
 					"path", r.URL.Path,
 					"ip", ClientIP(r),
-					"basic", basic.Enabled(),
-					"mock", mockEmail != "",
-					"verifier", verifier != nil,
 				)
+				if wantsHTML(r) {
+					next := url.QueryEscape(r.URL.RequestURI())
+					http.Redirect(w, r, "/admin/login?next="+next, http.StatusFound)
+					return
+				}
+				// API / curl path: 401 with WWW-Authenticate for Basic Auth
+				if basic.Enabled() {
+					realm := basic.Realm
+					if realm == "" {
+						realm = "mathsanalysis admin"
+					}
+					w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`", charset="UTF-8"`)
+				}
 				http.Error(w, "unauthenticated", http.StatusUnauthorized)
 				return
 			}
@@ -205,6 +218,17 @@ func AdminAuth(
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+// wantsHTML returns true if the request is likely from a browser (Accept
+// header contains text/html). htmx requests include Accept: */* so they're
+// treated as API — but htmx sets HX-Request: true which we also check here.
+func wantsHTML(r *http.Request) bool {
+	if r.Header.Get("HX-Request") == "true" {
+		return true
+	}
+	accept := r.Header.Get("Accept")
+	return strings.Contains(accept, "text/html")
 }
 
 func AdminEmail(ctx context.Context) string {

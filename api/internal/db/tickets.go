@@ -128,7 +128,13 @@ func (s *TicketStore) List(ctx context.Context, f ListFilter) ([]Ticket, int, er
 		args = append(args, v)
 		where += fmt.Sprintf(" AND %s $%d", cond, len(args))
 	}
-	if f.Status != "" && f.Status != "all" {
+	switch f.Status {
+	case "":
+		// Default view: show all active tickets, HIDE archived
+		where += " AND status <> 'archived'"
+	case "all":
+		// show everything including archived — no filter
+	default:
 		add("status =", f.Status)
 	}
 	if f.Category != "" {
@@ -218,7 +224,7 @@ func (s *TicketStore) Get(ctx context.Context, id uuid.UUID) (*Ticket, []Message
 
 func (s *TicketStore) UpdateStatus(ctx context.Context, id uuid.UUID, status string) error {
 	var closedAt any
-	if status == "closed" {
+	if status == "closed" || status == "archived" {
 		closedAt = time.Now().UTC()
 	}
 	_, err := s.pool.Exec(ctx,
@@ -226,6 +232,42 @@ func (s *TicketStore) UpdateStatus(ctx context.Context, id uuid.UUID, status str
 		status, closedAt, id,
 	)
 	return err
+}
+
+// Delete permanently removes a ticket and its messages (FK cascades).
+// Writes an audit_log entry before deleting for forensic trail.
+func (s *TicketStore) Delete(ctx context.Context, id uuid.UUID, actorEmail, ip string) error {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx) //nolint:errcheck
+
+	var publicCode, subject, requesterEmail string
+	err = tx.QueryRow(ctx,
+		`SELECT public_code, subject, email FROM tickets WHERE id = $1`, id,
+	).Scan(&publicCode, &subject, &requesterEmail)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return ErrNotFound
+		}
+		return err
+	}
+
+	_, err = tx.Exec(ctx, `
+		INSERT INTO audit_log (actor_email, action, target_type, target_id, metadata, ip)
+		VALUES ($1, 'ticket.delete', 'ticket', $2,
+		        jsonb_build_object('public_code', $3::text, 'subject', $4::text, 'requester_email', $5::text),
+		        NULLIF($6,'')::inet)
+	`, actorEmail, id.String(), publicCode, subject, requesterEmail, ip)
+	if err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec(ctx, `DELETE FROM tickets WHERE id = $1`, id); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
 }
 
 // FindByPublicCode returns the ticket whose public_code matches (case-insensitive).
@@ -322,7 +364,7 @@ func (s *TicketStore) AddReply(ctx context.Context, ticketID uuid.UUID, authorEm
 
 // Stats returns counts per status — used by admin sidebar badges.
 type Stats struct {
-	New, Open, Replied, Closed, Spam, Total int
+	New, Open, Replied, Closed, Spam, Archived, Total int
 }
 
 func (s *TicketStore) Stats(ctx context.Context) (Stats, error) {
@@ -334,9 +376,10 @@ func (s *TicketStore) Stats(ctx context.Context) (Stats, error) {
 		  COUNT(*) FILTER (WHERE status = 'replied'),
 		  COUNT(*) FILTER (WHERE status = 'closed'),
 		  COUNT(*) FILTER (WHERE status = 'spam'),
+		  COUNT(*) FILTER (WHERE status = 'archived'),
 		  COUNT(*)
 		FROM tickets
-	`).Scan(&st.New, &st.Open, &st.Replied, &st.Closed, &st.Spam, &st.Total)
+	`).Scan(&st.New, &st.Open, &st.Replied, &st.Closed, &st.Spam, &st.Archived, &st.Total)
 	return st, err
 }
 
