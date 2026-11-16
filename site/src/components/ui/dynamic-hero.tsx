@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState, type MouseEventHandler } from "react";
 import { Play } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Rgb = { r: number; g: number; b: number };
 
@@ -22,6 +23,7 @@ export interface HeroSectionProps {
   videoUrl?: string;
   /** Pass an empty array to hide the built-in nav (e.g. when the page has its own). */
   navItems?: HeroNavItem[];
+  className?: string;
 }
 
 // Parses 'rgb(r, g, b)' or 'rgba(r, g, b, a)' to {r, g, b}.
@@ -54,6 +56,7 @@ const HeroSection = ({
   imageAlt = "",
   videoUrl,
   navItems = defaultNavItems,
+  className,
 }: HeroSectionProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const targetRef = useRef<HTMLElement | null>(null);
@@ -194,7 +197,7 @@ const HeroSection = ({
   }, [showVideo, videoUrl]);
 
   return (
-    <div className="bg-background text-foreground min-h-screen flex flex-col">
+    <div className={cn("bg-background text-foreground min-h-screen flex flex-col", className)}>
       {navItems.length > 0 && (
         <nav className="w-full max-w-screen-md mx-auto flex flex-wrap justify-center sm:justify-between items-center px-4 sm:px-8 py-4 text-sm">
           {navItems.map((item) =>

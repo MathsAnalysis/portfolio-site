@@ -18,6 +18,7 @@ export function Home({ lang, d }: { lang: Lang; d: Dict }) {
         imageUrl={HERO_IMAGE}
         imageAlt={d.hero.imageAlt}
         navItems={[]}
+        className="dyn-hero"
       />
 
       <section className="wrap hero-meta">
