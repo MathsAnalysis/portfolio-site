@@ -3,7 +3,7 @@ import { TicketForm } from "./TicketForm";
 
 export function ContactPage({ d }: { d: Dict }) {
   return (
-    <section className="container contact">
+    <section className="wrap contact">
       <div>
         <p className="eyebrow">{d.form.label}</p>
         <h1 className="title title--xl">

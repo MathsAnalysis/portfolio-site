@@ -79,6 +79,7 @@ const en = {
       ", backend developer and security researcher. I build distributed systems, high performance APIs and AI powered infrastructure that serve thousands of requests without flinching.",
     ctaPrimary: "See selected work",
     ctaSecondary: "Get in touch",
+    imageAlt: "Rows of servers in a data center",
     metrics: [
       { value: "99.5%", label: "uptime / 12mo" },
       { value: "<100ms", label: "API p99" },
@@ -199,6 +200,7 @@ const it: Dict = {
       ", backend developer e security researcher. Costruisco sistemi distribuiti, API ad alte prestazioni e infrastrutture AI che servono migliaia di richieste senza battere ciglio.",
     ctaPrimary: "Vedi i progetti",
     ctaSecondary: "Contattami",
+    imageAlt: "File di server in un data center",
     metrics: [
       { value: "99.5%", label: "uptime / 12 mesi" },
       { value: "<100ms", label: "API p99" },

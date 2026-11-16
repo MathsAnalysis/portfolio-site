@@ -1,22 +1,27 @@
+import { HeroSection } from "@/components/ui/dynamic-hero";
 import { GITHUB_URL, PROJECTS, pathFor, type Dict, type Lang } from "../i18n";
+
+// Server room, Unsplash (Taylor Vick), free to use under the Unsplash License.
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80";
 
 export function Home({ lang, d }: { lang: Lang; d: Dict }) {
   const contact = pathFor(lang, "contact");
 
   return (
     <>
-      <section className="container hero">
+      <HeroSection
+        heading={`${d.hero.headline} ${d.hero.emphasis}.`}
+        tagline={`${d.hero.lead} Carlo Maria Cardi${d.hero.leadRest}`}
+        buttonText={d.hero.ctaPrimary}
+        buttonHref="#work"
+        imageUrl={HERO_IMAGE}
+        imageAlt={d.hero.imageAlt}
+        navItems={[]}
+      />
+
+      <section className="wrap hero-meta">
         <p className="pill"><span className="dot" aria-hidden="true" />{d.hero.status}</p>
-        <h1 className="display">
-          {d.hero.headline} <em>{d.hero.emphasis}</em>.
-        </h1>
-        <p className="lead">
-          {d.hero.lead} <strong>Carlo Maria Cardi</strong>{d.hero.leadRest}
-        </p>
-        <div className="actions">
-          <a className="btn btn--solid" href="#work">{d.hero.ctaPrimary}</a>
-          <a className="btn btn--ghost" href={contact}>{d.hero.ctaSecondary}</a>
-        </div>
         <dl className="metrics">
           {d.hero.metrics.map((m) => (
             <div key={m.label}>
@@ -25,10 +30,13 @@ export function Home({ lang, d }: { lang: Lang; d: Dict }) {
             </div>
           ))}
         </dl>
+        <div className="actions">
+          <a className="btn btn--ghost" href={contact}>{d.hero.ctaSecondary}</a>
+        </div>
       </section>
 
       <section id="work" className="section">
-        <div className="container">
+        <div className="wrap">
           <p className="eyebrow">{d.projects.label}</p>
           <div className="section__head">
             <h2 className="title">{d.projects.title}</h2>
@@ -72,7 +80,7 @@ export function Home({ lang, d }: { lang: Lang; d: Dict }) {
       </section>
 
       <section id="stack" className="section">
-        <div className="container">
+        <div className="wrap">
           <p className="eyebrow">{d.stack.label}</p>
           <h2 className="title title--spaced">
             {d.stack.title} <em>{d.stack.emphasis}</em>.
@@ -89,7 +97,7 @@ export function Home({ lang, d }: { lang: Lang; d: Dict }) {
       </section>
 
       <section className="section section--cta">
-        <div className="container">
+        <div className="wrap">
           <p className="eyebrow">{d.contact.label}</p>
           <h2 className="title title--xl">
             {d.contact.headline} <em>{d.contact.emphasis}</em>?

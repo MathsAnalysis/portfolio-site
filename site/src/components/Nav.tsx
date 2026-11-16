@@ -17,7 +17,7 @@ export function Nav({ lang, page, d }: { lang: Lang; page: Page; d: Dict }) {
 
   return (
     <header className="nav">
-      <nav className="container nav__inner" aria-label="Main">
+      <nav className="wrap nav__inner" aria-label="Main">
         <a href={home} className="brand">
           <span className="brand__mark" aria-hidden="true">cm</span>
           Carlo Maria Cardi
