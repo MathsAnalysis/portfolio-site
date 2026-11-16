@@ -3,10 +3,10 @@
 .env.*
 !.env.example
 
-# ─── Astro / node ───
+# ─── Vite / node ───
 site/node_modules
 site/dist
-site/.astro
+site/dist-ssr
 cf-worker/node_modules
 cf-worker/.wrangler
 cf-worker/dist
