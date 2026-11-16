@@ -31,34 +31,23 @@ docker logs portfolio-api | grep subsystems
 
 ## 3. Frontend — add the widget
 
-Edit `site/src/components/ContactForm.astro` and add near the submit button:
+Load the script once in `site/index.html` (inside `<head>`):
 
 ```html
-<!-- just before the submit button -->
-<div
-  class="cf-turnstile"
-  data-sitekey="0x4AAAAAAA...your-site-key"
-  data-theme="dark"
-  data-action="ticket-submit"
-  data-callback="onTurnstile"
-></div>
-
-<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 ```
 
-And in the JS block of the same file, replace the `payload` construction:
+In `site/src/components/TicketForm.tsx`, add the widget just before `.form__footer`:
 
-```js
-const tsToken = form.querySelector("[name='cf-turnstile-response']")?.value || "";
-const payload = {
-  first_name: form.first_name.value.trim(),
-  last_name:  form.last_name.value.trim(),
-  email:      form.email.value.trim(),
-  category:   form.category.value,
-  subject:    form.subject.value.trim(),
-  message:    form.message.value.trim(),
-  cf_turnstile: tsToken,
-};
+```tsx
+<div className="cf-turnstile field--wide" data-sitekey="0x4AAAAAAA...your-site-key" data-action="ticket-submit" />
+```
+
+Turnstile injects a hidden `cf-turnstile-response` input into the form, so
+`submitTicket` can read it from the same `FormData`; add one field to the JSON body:
+
+```ts
+cf_turnstile: field("cf-turnstile-response"),
 ```
 
 ## 4. Verify

@@ -1,7 +1,7 @@
 name: portfolio
 
 services:
-  # ───────────────── static site (nginx + Astro build) ─────────────────
+  # ───────────────── static site (nginx + Vite/React prerender) ─────────────────
   site:
     build:
       context: ./site
