@@ -19,8 +19,8 @@ export function Nav({ lang, page, d }: { lang: Lang; page: Page; d: Dict }) {
     <header className="nav">
       <nav className="wrap nav__inner" aria-label="Main">
         <a href={home} className="brand">
-          <span className="brand__mark" aria-hidden="true">cm</span>
-          Carlo Maria Cardi
+          <span className="sr-only">Carlo Maria Cardi</span>
+          <span className="brand__prompt" aria-hidden="true">carlo@mathsanalysis:~$</span>
         </a>
         <div className="nav__links">
           <a href={`${home}#work`}>{d.nav.work}</a>
