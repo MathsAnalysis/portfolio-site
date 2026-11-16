@@ -57,7 +57,8 @@ export function TicketForm({ d }: { d: Dict }) {
   }
 
   return (
-    <form className="form" onSubmit={onSubmit} autoComplete="on">
+    <form className="card card--raised form" onSubmit={onSubmit} autoComplete="on">
+      <p className="card__caption field--wide"><span>{d.contact.formCaption}</span><span>{d.contact.formHint}</span></p>
       <Field name="first_name" label={f.firstName} placeholder={f.firstNamePlaceholder} max={80} autoComplete="given-name" />
       <Field name="last_name" label={f.lastName} placeholder={f.lastNamePlaceholder} max={80} autoComplete="family-name" />
       <Field name="email" type="email" label={f.email} placeholder={f.emailPlaceholder} max={254} autoComplete="email" wide />
@@ -101,7 +102,7 @@ export function TicketForm({ d }: { d: Dict }) {
           {status.kind === "sent" && f.success(status.code)}
           {status.kind === "error" && f.error(status.message)}
         </p>
-        <button type="submit" className="btn btn--accent" disabled={status.kind === "sending"}>
+        <button type="submit" className="btn btn--accent btn--lg" disabled={status.kind === "sending"}>
           {status.kind === "sending" ? f.sending : `${f.submit} →`}
         </button>
       </div>

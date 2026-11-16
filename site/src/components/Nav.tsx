@@ -2,7 +2,7 @@ import { pathFor, type Dict, type Lang, type Page } from "../i18n";
 
 function toggleTheme() {
   const root = document.documentElement;
-  const next = root.dataset.theme === "light" ? "dark" : "light";
+  const next = root.dataset.theme === "dark" ? "light" : "dark";
   root.dataset.theme = next;
   try {
     localStorage.setItem("theme", next);
@@ -13,21 +13,24 @@ function toggleTheme() {
 
 export function Nav({ lang, page, d }: { lang: Lang; page: Page; d: Dict }) {
   const home = pathFor(lang, "home");
+  const contact = pathFor(lang, "contact");
   const other = lang === "en" ? "it" : "en";
 
   return (
     <header className="nav">
       <nav className="wrap nav__inner" aria-label="Main">
-        <a href={home} className="brand">
-          Carlo Maria Cardi
-        </a>
+        <a href={home} className="brand">Carlo Cardi<span aria-hidden="true">.</span></a>
         <div className="nav__links">
           <a href={`${home}#work`}>{d.nav.work}</a>
           <a href={`${home}#stack`}>{d.nav.stack}</a>
-          <a href={pathFor(lang, "contact")} aria-current={page === "contact" ? "page" : undefined}>
-            {d.nav.contact}
-          </a>
-          <a className="chip-btn" href={pathFor(other, page)} hrefLang={other} lang={other} title={d.nav.switchLang}>
+          <a href={contact} aria-current={page === "contact" ? "page" : undefined}>{d.nav.contact}</a>
+        </div>
+        <div className="nav__tools">
+          <a className="lang" href={pathFor(other, page)} hrefLang={other} lang={other} title={d.nav.switchLang}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+            </svg>
             {other.toUpperCase()}
           </a>
           <button type="button" className="icon-btn" onClick={toggleTheme} aria-label={`${d.nav.themeLight} / ${d.nav.themeDark}`}>
@@ -39,6 +42,7 @@ export function Nav({ lang, page, d }: { lang: Lang; page: Page; d: Dict }) {
               <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
             </svg>
           </button>
+          <a className="btn btn--solid nav__cta" href={contact}>{d.nav.cta} <span aria-hidden="true">→</span></a>
         </div>
       </nav>
     </header>
