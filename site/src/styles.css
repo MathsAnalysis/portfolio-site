@@ -20,7 +20,7 @@
   --tile: #ebe5d4;
   --radius: 0px;
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --serif: ui-serif, "New York", "Fraunces", Georgia, serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light;
 }
@@ -94,7 +94,7 @@ strong { font-weight: 500; color: var(--text); }
 
 /* ── type ── */
 .eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
-.display { font-size: clamp(3rem, 8vw, 6.5rem); line-height: 1; letter-spacing: -0.025em; max-width: 14ch; text-wrap: balance; }
+.display { font-size: clamp(2.75rem, 7vw, 5.75rem); line-height: 1.02; letter-spacing: -0.035em; max-width: 14ch; text-wrap: balance; }
 .title { font-size: clamp(1.75rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -0.025em; font-weight: 700; max-width: 18ch; text-wrap: balance; }
 .title--xl { font-size: clamp(2rem, 4.8vw, 4rem); line-height: 1.06; letter-spacing: -0.02em; max-width: 20ch; }
 .title--spaced { margin: 16px 0 56px; }
@@ -212,14 +212,14 @@ legend.field__label { margin-bottom: 10px; }
 .status { display: inline-flex; align-items: center; gap: 8px; }
 
 /* ── paper accents ── */
-.display, .title, .project h3, .project__abbr { font-family: var(--serif); font-weight: 400; }
-.display em, .title em { font-style: italic; color: inherit; }
-.brand { font-family: var(--serif); font-size: 20px; font-weight: 400; letter-spacing: -0.01em; }
+.display, .title, .project h3, .project__abbr { font-family: var(--display); font-weight: 600; }
+.display em, .title em { font-style: normal; color: var(--muted); }
+.brand { font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
 .btn { border-radius: 999px; }
 .btn--ghost { border-color: var(--line-strong); }
 .dot, .status .dot { background: var(--live); }
 .badge { background: transparent; color: var(--live); border: 1px solid currentColor; }
-.project__abbr { font-style: italic; letter-spacing: -0.02em; }
+.project__abbr { letter-spacing: -0.04em; }
 
 /* ── motion ── */
 @media (prefers-reduced-motion: no-preference) {
@@ -247,5 +247,5 @@ legend.field__label { margin-bottom: 10px; }
 }
 
 /* Unlayered on purpose: restyles the dynamic-hero heading over its Tailwind utilities. */
-.dyn-hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.75rem, 7vw, 5.75rem); line-height: 1.02; letter-spacing: -0.025em; max-width: 16ch; }
+.dyn-hero h1 { font-family: var(--display); font-weight: 600; font-size: clamp(2.5rem, 6.5vw, 5.25rem); line-height: 1.04; letter-spacing: -0.035em; max-width: 16ch; }
 .dyn-hero h1 + p { font-size: clamp(16px, 1.5vw, 18px); line-height: 1.6; }
